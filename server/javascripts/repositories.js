@@ -1,11 +1,17 @@
 'use strict'
 
+const fs = require('fs')
+const path = require("path");
 var _ = require('lodash')
 var colors = require('colors')
 
 var Sellers = function () {
   var sellersMap = {}
+  var sellerPath = path.join(process.cwd(), 'sellers.json');
   var cashHistory = {}
+  var cashHistoryPath = path.join(process.cwd(), 'cashHistory.json')
+  var iteration = 1;
+  var iterationPath = path.join(process.cwd(), 'iteration.json')
 
   this.cashHistory = cashHistory
 
@@ -28,19 +34,54 @@ var Sellers = function () {
     return sellersMap[sellerName]
   }
 
-  function add (seller) {
+  this.getCashHistory = function(sellerName) {
+    return cashHistory[sellerName]
+  }
+
+  this.getIteration = function () {
+    return iteration;
+  }
+
+  function add(seller) {
     sellersMap[seller.name] = seller
     cashHistory[seller.name] = []
   }
-  function update (seller) {
+  function update(seller) {
     var previousCash = sellersMap[seller.name].cash
     sellersMap[seller.name] = seller
     sellersMap[seller.name].cash = previousCash
   }
+
+  this.saveGameState = function (currentIteration) {
+    var sellerJson = JSON.stringify(sellersMap);
+    var cashHistoryJson = JSON.stringify(cashHistory);
+    var iterationJson = JSON.stringify({"iteration": currentIteration});
+
+    fs.writeFile(sellerPath, sellerJson, err => {})
+    fs.writeFile(cashHistoryPath, cashHistoryJson, err => {})
+    fs.writeFile(iterationPath, iterationJson, err => {})
+    console.info('Game state saved.');
+  }
+
+  this.loadGameState = function () {
+    try {
+      sellersMap = JSON.parse(fs.readFileSync(sellerPath, 'utf8').toString());
+      this.cashHistory = JSON.parse(fs.readFileSync(cashHistoryPath, 'utf8').toString());
+      iteration = JSON.parse(fs.readFileSync(iterationPath, 'utf8').toString()).iteration;
+
+    } catch (err) {
+      console.error(err);
+    }
+
+    console.info('Game state loaded.');
+    console.info('Sellers: ' + JSON.stringify(sellersMap));
+    console.info('CashHistory: ' + JSON.stringify(this.cashHistory));
+    console.info('Iteration: ' + iteration);
+  }
 }
 
 Sellers.prototype = (function () {
-  function getLastRecordedCashAmount (currentSellersCashHistory, lastRecordedIteration) {
+  function getLastRecordedCashAmount(currentSellersCashHistory, lastRecordedIteration) {
     var lastRecordedValue = currentSellersCashHistory[lastRecordedIteration - 1]
 
     if (lastRecordedValue === undefined) {
@@ -50,13 +91,13 @@ Sellers.prototype = (function () {
     return lastRecordedValue
   }
 
-  function enlargeHistory (newSize, oldHistory) {
+  function enlargeHistory(newSize, oldHistory) {
     var newHistory = new Array(newSize)
     newHistory.push.apply(newHistory, oldHistory)
     return newHistory
   }
 
-  function fillMissingIterations (currentIteration, currentSellersCashHistory) {
+  function fillMissingIterations(currentIteration, currentSellersCashHistory) {
     var lastRecordedIteration = currentSellersCashHistory.length
 
     if (lastRecordedIteration >= currentIteration) {
@@ -68,7 +109,7 @@ Sellers.prototype = (function () {
     return _.fill(newSellersCashHistory, lastRecordedValue, lastRecordedIteration, currentIteration)
   }
 
-  function updateCashHistory (self, seller, currentIteration) {
+  function updateCashHistory(self, seller, currentIteration) {
     var currentSellersCashHistory = self.cashHistory[seller.name]
     var newSellersCashHistory = fillMissingIterations(currentIteration, currentSellersCashHistory)
     newSellersCashHistory[currentIteration] = seller.cash
@@ -136,11 +177,11 @@ Countries.prototype = (function () {
     MT: [1.2, 1]
   }
 
-  function scale (factor) {
+  function scale(factor) {
     return function (price) { return price * factor }
   }
 
-  function defaultTaxRule (name) {
+  function defaultTaxRule(name) {
     return scale(europeanCountries[name][0])
   }
 
@@ -149,11 +190,11 @@ Countries.prototype = (function () {
     this.taxRule = taxRule
   }
 
-  function customEval (s) {
+  function customEval(s) {
     return new Function('return ' + s)() // eslint-disable-line no-new-func
   }
 
-  function lookupForOverridenDefinition (configuration, country) {
+  function lookupForOverridenDefinition(configuration, country) {
     var conf = configuration.all()
     if (!conf.taxes || !conf.taxes[country]) {
       return null

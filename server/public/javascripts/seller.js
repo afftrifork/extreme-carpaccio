@@ -4,8 +4,13 @@ var SellerForm = React.createClass({
 	handleSubmit: function(e){
 		e.preventDefault();
 		var name = this.refs.name.getDOMNode().value.trim();
-		var password = this.refs.password.getDOMNode().value.trim();
-		var url = this.refs.url.getDOMNode().value.trim();
+		var password = '123';
+		if (this.refs.password != null) {
+			password = this.refs.password.getDOMNode().value.trim();
+		} 
+		var ip = this.refs.ip.getDOMNode().value.trim();
+		var port = this.refs.port.getDOMNode().value.trim();
+		var url = "http://" + ip + ":" + port;
 
 		if(!name || !url) {
 			return;
@@ -15,31 +20,30 @@ var SellerForm = React.createClass({
 
 		this.refs.name.getDOMNode().value= '';
 		this.refs.password.getDOMNode().value= '';
-		this.refs.url.getDOMNode().value= '';
+		this.refs.ip.getDOMNode().value= '';
+		this.refs.port.getDOMNode().value= '';
 	},
 
 	render: function(){
 		return (
 			<div className='jumbotron'>
-				<h2>Hello, Seller!</h2>
-
 				<form className='form-inline' onSubmit={this.handleSubmit}>
 					<div className='form-group'>
-						<label htmlFor='name' className='sr-only'>Name</label>
+						<label htmlFor='name'>Name</label>
 						<input type='text' placeholder='your name' className='form-control' ref='name'
                                data-toggle='tooltip' data-placement='bottom' title='Your username'/>
 					</div>
 					<div className='form-group'>
-						<label htmlFor='password' className='sr-only'>Password</label>
-						<input type='password' placeholder='your password' className='form-control' ref='password'
-                               data-toggle='tooltip' data-placement='bottom' title='Password is used if you want to register yourself on a different url. You will need to provide the same username with the same password. Beware that there is nothing that can be done to retrieve it...'/>
+						<label htmlFor='ip'>IP</label>
+                        <input type='text' placeholder='192.168.1.1' className='form-control' ref='ip'
+                               data-toggle='tooltip' data-placement='bottom' title='IP of the client computer' />
 					</div>
 					<div className='form-group'>
-						<label htmlFor='url' className='sr-only'>URL</label>
-                        <input type='text' placeholder='http://192.168.1.1:3000' className='form-control' ref='url'
-                               data-toggle='tooltip' data-placement='bottom' title='Base url of your own client' />
+						<label htmlFor='port'>Port</label>
+                        <input type='text' placeholder='3000' className='form-control' ref='port'
+                               data-toggle='tooltip' data-placement='bottom' title='Port of that the client is running on' />
 					</div>
-					<button type='submit' className='btn btn-success'>Register</button>
+					<button type='submit' className='btn btn-success align-right'>Register</button>
 				</form>
 			</div>
 		);

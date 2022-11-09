@@ -16,6 +16,10 @@ var sellerService = new services.SellerService(sellers, configuration);
 var orderService = new services.OrderService(configuration);
 var dispatcher = new services.Dispatcher(sellerService, orderService, configuration);
 
+if (configuration.all().loadState) {
+    sellers.loadGameState();
+}
+
 var app = express();
 
 app.use(bodyParser.json());
@@ -24,6 +28,11 @@ app.use('/', routes(sellerService, dispatcher));
 app.use(express.static(path.join(__dirname, 'public')));
 
 configuration.watch(function() {}, false, 500);
-dispatcher.startBuying(1);
+if (configuration.all().loadState) {
+    console.log(sellers.getIteration())
+    dispatcher.startBuying(sellers.getIteration())
+} else {
+    dispatcher.startBuying(1);
+}
 
 module.exports = app;

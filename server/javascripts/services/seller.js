@@ -11,11 +11,19 @@ module.exports = SellerService
 
 var service = SellerService.prototype
 
+service.saveGameState = function (iteration) {
+  this.sellers.saveGameState(iteration);
+}
+
 service.addCash = function (seller, amount, currentIteration) {
   this.sellers.updateCash(seller.name, amount, currentIteration)
 }
 
 service.deductCash = function (seller, amount, currentIteration) {
+  if (this.configuration.all().cashFreeze) {
+    console.info('Cash was not updated because cashFreeze config parameter is true')
+    return
+  }
   this.sellers.updateCash(seller.name, -amount, currentIteration)
 }
 
