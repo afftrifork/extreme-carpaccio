@@ -226,6 +226,9 @@ Dispatcher.prototype = (function () {
       }
 
       scheduleNextIteration(this, nextIteration, period.shoppingIntervalInMillis)
+      if (this.configuration.all().saveState && iteration % 10 === 0) {
+        this.sellerService.saveGameState(iteration);
+      }
       return nextIteration
     }
   }

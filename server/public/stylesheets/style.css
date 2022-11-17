@@ -6,3 +6,53 @@ body {
 a {
   color: #00B7FF;
 }
+
+.form-group {
+  margin-right: 10px;
+}
+
+.form-inline {
+  margin-top: 50px;
+}
+
+#trifork-logo {
+  width: 180px;
+}
+
+.navbar-brand {
+  padding: 0;
+  line-height: 90px;
+}
+
+.pswd-inp {
+  width: 200px;
+}
+
+.navbar {
+  background-color: grey;
+}
+.navbar-inverse .navbar-brand {
+  color: black;
+  padding-left: 25px;
+  font-size: 20px;
+  font-family: monospace;
+}
+
+#dot {
+  color: orange;
+}
+
+.form_title {
+  margin-bottom: 30px;
+}
+
+label {
+  position: absolute;
+  margin-top: -20px;
+  font-weight: normal;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.align-right {
+  float: right;
+}
