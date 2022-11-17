@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler
 import json
 
 # Server Configuration
-HOST_NAME = 'localhost'
+HOST_NAME = "0.0.0.0"
 HOST_NAME_TEST = HOST_NAME
 PORT_NUMBER = 8080
 PORT_NUMBER_TEST = PORT_NUMBER + 10
@@ -40,8 +40,9 @@ class ServerHandler(BaseHTTPRequestHandler):
         # log
         print("LOG in PATH >> " , object)
         # Only for test
-        #total = calculate(object)
-        self.__write_response((json.dumps({'total': 1000})), 200)
+        total = 1000
+        self.__write_response((json.dumps({'total': total})), 200)
+
 
     def do_GET(self):
         self.__write_response('hello world', 200)
@@ -51,7 +52,7 @@ class ServerHandler(BaseHTTPRequestHandler):
 
             '/ping': lambda: self.__write_response('pong', 200),
             '/feedback': self.__feedback,
-            '/path': self.__your_path
+            '/order': self.__your_path
 
         }.get(self.path, lambda: self.__write_response('Unknown', 404))()
 
